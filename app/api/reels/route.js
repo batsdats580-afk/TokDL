@@ -6,7 +6,6 @@ export async function POST(req) {
       return Response.json({ error: "No URL provided" }, { status: 400 });
     }
 
-    // SnapInsta API (free, no watermark)
     const apiUrl = "https://snapinsta.app/api/ajaxSearch";
 
     const formData = new URLSearchParams();
@@ -27,7 +26,7 @@ export async function POST(req) {
     }
 
     return Response.json({
-      video: data.data[0].url, // direct MP4 link
+      video: data.data[0].url,
       thumbnail: data.data[0].thumbnail,
     });
   } catch (error) {
