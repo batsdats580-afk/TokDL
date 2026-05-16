@@ -1,50 +1,34 @@
-import { NextResponse } from "next/server";
-
-function detectPlatform(url) {
-  const u = url.toLowerCase();
-
-  if (u.includes("tiktok.com")) return "tiktok";
-  if (u.includes("instagram.com") && u.includes("/reel")) return "instagram";
-
-  return "unknown";
-}
-
-export async function GET(req) {
-  const { searchParams } = new URL(req.url);
-  const url = searchParams.get("url");
-
-  if (!url) {
-    return NextResponse.json({ error: "No URL provided." }, { status: 400 });
-  }
-
-  const platform = detectPlatform(url);
-
-  if (platform === "unknown") {
-    return NextResponse.json(
-      { error: "Unsupported link. Only TikTok + Instagram Reels supported." },
-      { status: 400 }
-    );
-  }
-
+export async function POST(req) {
   try {
-    // -----------------------------
-    // ⭐ TIKTOK (TikWM API)
-    // -----------------------------
-    if (platform === "tiktok") {
-      const api = await fetch(
-        `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`
-      );
+    const { url } = await req.json();
 
-      const data = await api.json();
+    if (!url) {
+      return Response.json({ error: "No URL provided" }, { status: 400 });
+    }
 
-      if (!data || !data.data) {
-        return NextResponse.json(
-          { error: "Invalid TikTok link." },
-          { status: 400 }
-        );
+    const lower = url.toLowerCase();
+
+    // ----------------------------------------------------
+    // ⭐ 1. TIKTOK HANDLER (TikWM API)
+    // ----------------------------------------------------
+    if (lower.includes("tiktok.com")) {
+      let finalUrl = url;
+
+      // Expand short TikTok links (vm.tiktok.com)
+      if (lower.includes("vm.tiktok.com")) {
+        const res = await fetch(url, { redirect: "follow" });
+        finalUrl = res.url;
       }
 
-      return NextResponse.json({
+      const api = `https://www.tikwm.com/api/?url=${encodeURIComponent(finalUrl)}`;
+      const response = await fetch(api);
+      const data = await response.json();
+
+      if (!data || !data.data) {
+        return Response.json({ error: "Invalid TikTok link." }, { status: 400 });
+      }
+
+      return Response.json({
         platform: "tiktok",
         nowm: data.data.play,
         cover: data.data.cover,
@@ -52,10 +36,10 @@ export async function GET(req) {
       });
     }
 
-    // -----------------------------
-    // ⭐ INSTAGRAM REELS (SnapInsta)
-    // -----------------------------
-    if (platform === "instagram") {
+    // ----------------------------------------------------
+    // ⭐ 2. INSTAGRAM REELS HANDLER (Updated SnapInsta)
+    // ----------------------------------------------------
+    if (lower.includes("instagram.com") && lower.includes("/reel")) {
       const snap = await fetch("https://snapinsta.app/api/ajaxSearch", {
         method: "POST",
         headers: {
@@ -64,29 +48,38 @@ export async function GET(req) {
         body: new URLSearchParams({ url })
       });
 
-      const text = await snap.text();
+      const html = await snap.text();
 
-      // Extract MP4 link from SnapInsta HTML
-      const mp4 = text.match(/https?:\/\/[^"']+\.mp4/);
-      const thumb = text.match(/https?:\/\/[^"']+\.(jpg|jpeg|png)/);
+      // Updated MP4 extraction
+      const mp4 = html.match(/https?:\/\/[^"']+\.mp4/);
+      const thumb = html.match(/https?:\/\/[^"']+\.(jpg|jpeg|png)/);
 
       if (!mp4) {
-        return NextResponse.json(
+        return Response.json(
           { error: "Failed to fetch Instagram Reel." },
           { status: 400 }
         );
       }
 
-      return NextResponse.json({
+      return Response.json({
         platform: "instagram",
         nowm: mp4[0],
         cover: thumb ? thumb[0] : null,
         title: "Instagram Reel"
       });
     }
+
+    // ----------------------------------------------------
+    // ⭐ UNSUPPORTED LINK
+    // ----------------------------------------------------
+    return Response.json(
+      { error: "Unsupported link. Only TikTok + Instagram Reels supported." },
+      { status: 400 }
+    );
+
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
+    return Response.json(
       { error: "Server error. Try again." },
       { status: 500 }
     );
