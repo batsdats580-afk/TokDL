@@ -9,12 +9,12 @@ export async function POST(req) {
     const lower = url.toLowerCase();
 
     // ----------------------------------------------------
-    // ⭐ 1. TIKTOK HANDLER (TikWM API)
+    // ⭐ 1. TIKTOK HANDLER (TikWM)
     // ----------------------------------------------------
     if (lower.includes("tiktok.com")) {
       let finalUrl = url;
 
-      // Expand short TikTok links (vm.tiktok.com)
+      // Expand short TikTok links
       if (lower.includes("vm.tiktok.com")) {
         const res = await fetch(url, { redirect: "follow" });
         finalUrl = res.url;
@@ -25,36 +25,48 @@ export async function POST(req) {
       const data = await response.json();
 
       if (!data || !data.data) {
-        return Response.json({ error: "Invalid TikTok link." }, { status: 400 });
+        return Response.json(
+          { error: "Invalid TikTok link." },
+          { status: 400 }
+        );
       }
 
       return Response.json({
         platform: "tiktok",
         nowm: data.data.play,
-        cover: data.data.cover,
-        title: data.data.title || "TikTok Video"
+        cover: data.data.cover_large || data.data.cover,
+        title: data.data.title || "TikTok Video",
       });
     }
 
     // ----------------------------------------------------
-    // ⭐ 2. INSTAGRAM REELS HANDLER (Updated SnapInsta)
+    // ⭐ 2. INSTAGRAM REELS HANDLER (RapidAPI)
     // ----------------------------------------------------
     if (lower.includes("instagram.com") && lower.includes("/reel")) {
-      const snap = await fetch("https://snapinsta.app/api/ajaxSearch", {
-        method: "POST",
+      const apiKey = process.env.RAPIDAPI_KEY;
+      const apiHost = process.env.RAPIDAPI_HOST;
+
+      if (!apiKey || !apiHost) {
+        return Response.json(
+          { error: "Instagram not configured yet (missing API key)." },
+          { status: 500 }
+        );
+      }
+
+      const apiUrl = `https://${apiHost}/download?url=${encodeURIComponent(url)}`;
+
+      const resp = await fetch(apiUrl, {
+        method: "GET",
         headers: {
-          "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+          "Content-Type": "application/json",
+          "X-RapidAPI-Key": apiKey,
+          "X-RapidAPI-Host": apiHost,
         },
-        body: new URLSearchParams({ url })
       });
 
-      const html = await snap.text();
+      const data = await resp.json();
 
-      // Updated MP4 extraction
-      const mp4 = html.match(/https?:\/\/[^"']+\.mp4/);
-      const thumb = html.match(/https?:\/\/[^"']+\.(jpg|jpeg|png)/);
-
-      if (!mp4) {
+      if (!data || !data.video) {
         return Response.json(
           { error: "Failed to fetch Instagram Reel." },
           { status: 400 }
@@ -63,9 +75,9 @@ export async function POST(req) {
 
       return Response.json({
         platform: "instagram",
-        nowm: mp4[0],
-        cover: thumb ? thumb[0] : null,
-        title: "Instagram Reel"
+        nowm: data.video,
+        cover: data.thumbnail,
+        title: data.title || "Instagram Reel",
       });
     }
 
