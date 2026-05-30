@@ -1,7 +1,6 @@
 import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import InstallPWA from "../components/InstallPWA";
 
 export const metadata = {
   title: "TokDL - TikTok Downloader (No Watermark)",
@@ -23,13 +22,12 @@ export default function RootLayout({ children }) {
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
 
-        {/* Correct icon path (matches your manifest) */}
+        {/* Correct icon path */}
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
 
       <body className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
         <Header />
-        <InstallPWA />
 
         <main className="flex-1 flex justify-center px-4">
           <div className="w-full max-w-3xl py-10">{children}</div>
