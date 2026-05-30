@@ -28,7 +28,7 @@ export default function Downloader() {
       thumbnail: data.data.cover,
       username: data.data.author?.unique_id || "unknown",
       caption: data.data.title || "",
-      videoUrl: data.data.play, // no-watermark HD
+      videoUrl: data.data.play,
     };
   };
 
@@ -53,13 +53,20 @@ export default function Downloader() {
     };
   };
 
-  const forceDownload = (fileUrl) => {
+  // ⭐ REAL FORCED DOWNLOAD — WORKS ON ALL PHONES
+  const forceDownload = async (fileUrl) => {
+    const response = await fetch(fileUrl);
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+
     const a = document.createElement("a");
-    a.href = fileUrl;
+    a.href = blobUrl;
     a.download = "video.mp4";
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    a.remove();
+
+    window.URL.revokeObjectURL(blobUrl);
   };
 
   const handleSubmit = async (e) => {
@@ -82,11 +89,8 @@ export default function Downloader() {
       setLoading(true);
       let data;
 
-      if (platform === "tiktok") {
-        data = await fetchTikTok(url);
-      } else if (platform === "instagram") {
-        data = await fetchInstagram(url);
-      }
+      if (platform === "tiktok") data = await fetchTikTok(url);
+      if (platform === "instagram") data = await fetchInstagram(url);
 
       setResult(data);
     } catch (err) {
@@ -98,11 +102,11 @@ export default function Downloader() {
 
   return (
     <section className="max-w-xl mx-auto mt-6">
-      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-3">
         <label className="block text-sm font-medium text-gray-700">
           Paste TikTok or Instagram Reel
         </label>
+
         <input
           type="url"
           value={url}
@@ -110,6 +114,7 @@ export default function Downloader() {
           placeholder="https://www.tiktok.com/... or https://www.instagram.com/reel/..."
           className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+
         <button
           type="submit"
           disabled={loading}
@@ -119,12 +124,10 @@ export default function Downloader() {
         </button>
       </form>
 
-      {/* Error */}
       {error && (
         <p className="mt-3 text-sm text-red-600 font-medium">{error}</p>
       )}
 
-      {/* Preview + Download */}
       {result && (
         <div className="mt-4 p-4 bg-white rounded-xl shadow-md">
           <img
