@@ -4,27 +4,41 @@ import { useEffect, useState } from "react";
 
 export default function InstallPWA() {
   const [prompt, setPrompt] = useState(null);
-  const [show, setShow] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
+    // Detect if already installed
+    window.addEventListener("appinstalled", () => {
+      setIsInstalled(true);
+    });
+
+    // Detect standalone mode
+    if (window.matchMedia("(display-mode: standalone)").matches) {
+      setIsInstalled(true);
+    }
+
+    // Capture install prompt
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       setPrompt(e);
-      setShow(true);
     });
   }, []);
 
   const installApp = () => {
-    if (!prompt) return;
-    prompt.prompt();
-    setShow(false);
+    if (prompt) {
+      prompt.prompt();
+    } else {
+      alert("If nothing happens, your browser is blocking the prompt. Try again.");
+    }
   };
 
-  if (!show) return null;
+  const openApp = () => {
+    window.location.href = "/";
+  };
 
   return (
     <button
-      onClick={installApp}
+      onClick={isInstalled ? openApp : installApp}
       className="
         fixed bottom-6 right-6
         bg-gradient-to-r from-[#ff0050] to-[#00f2ea]
@@ -37,7 +51,7 @@ export default function InstallPWA() {
         transition-all
       "
     >
-      Install TokDL App
+      {isInstalled ? "Open TokDL App" : "Install TokDL App"}
     </button>
   );
 }
