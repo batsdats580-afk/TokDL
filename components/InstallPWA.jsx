@@ -8,7 +8,7 @@ export default function InstallPWA() {
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // Detect if app is running as standalone (installed)
+    // Detect standalone mode (inside the app)
     if (window.matchMedia("(display-mode: standalone)").matches) {
       setIsStandalone(true);
     }
@@ -18,16 +18,11 @@ export default function InstallPWA() {
       setIsInstalled(true);
     });
 
-    // Detect install prompt
+    // Capture install prompt
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       setPrompt(e);
     });
-
-    // Detect if already installed (browser remembers)
-    if (window.navigator.standalone === true) {
-      setIsStandalone(true);
-    }
   }, []);
 
   // If inside the installed app → show nothing
@@ -46,22 +41,22 @@ export default function InstallPWA() {
   };
 
   return (
-    <button
-      onClick={isInstalled ? openApp : installApp}
-      className="
-        fixed top-4 right-4
-        bg-gradient-to-r from-[#ff0050] to-[#00f2ea]
-        text-white font-bold
-        px-6 py-3
-        rounded-full shadow-2xl
-        text-lg
-        animate-pulse
-        hover:opacity-90
-        transition-all
-        z-50
-      "
-    >
-      {isInstalled ? "Open TokDL App" : "Install TokDL App"}
-    </button>
+    <div className="w-full flex justify-center mt-4 mb-2">
+      <button
+        onClick={isInstalled ? openApp : installApp}
+        className="
+          bg-gradient-to-r from-[#ff0050] to-[#00f2ea]
+          text-white font-bold
+          px-6 py-3
+          rounded-full shadow-xl
+          text-lg
+          animate-pulse
+          hover:opacity-90
+          transition-all
+        "
+      >
+        {isInstalled ? "Open TokDL App" : "Install TokDL App"}
+      </button>
+    </div>
   );
 }
