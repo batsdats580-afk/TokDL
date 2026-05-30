@@ -23,13 +23,21 @@ export default function InstallPWA() {
   if (!show) return null;
 
   return (
-    <div className="bg-blue-600 text-white text-center py-3 px-4">
-      <button
-        onClick={installApp}
-        className="font-semibold underline"
-      >
-        Install TokDL App
-      </button>
-    </div>
+    <button
+      onClick={installApp}
+      className="
+        fixed bottom-6 right-6
+        bg-gradient-to-r from-[#ff0050] to-[#00f2ea]
+        text-white font-bold
+        px-7 py-4
+        rounded-full shadow-2xl
+        text-xl
+        animate-pulse
+        hover:opacity-90
+        transition-all
+      "
+    >
+      Install TokDL App
+    </button>
   );
 }
