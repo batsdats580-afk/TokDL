@@ -53,20 +53,30 @@ export default function Downloader() {
     };
   };
 
-  // ⭐ REAL FORCED DOWNLOAD — WORKS ON ALL PHONES
+  // ⭐ FINAL REAL FORCED DOWNLOAD — FAST + WORKS ON ALL PHONES
   const forceDownload = async (fileUrl) => {
-    const response = await fetch(fileUrl);
-    const blob = await response.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
+    try {
+      const response = await fetch(fileUrl, {
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      });
 
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = "video.mp4";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
 
-    window.URL.revokeObjectURL(blobUrl);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = "video.mp4";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      alert("Download failed. Try again.");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -151,4 +161,4 @@ export default function Downloader() {
       )}
     </section>
   );
-}
+        }
