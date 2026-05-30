@@ -1,4 +1,4 @@
-"use client";
+          "use client";
 
 import { useState } from "react";
 
@@ -53,11 +53,13 @@ export default function Downloader() {
     };
   };
 
-  // ⭐ FINAL REAL FORCED DOWNLOAD — FAST + WORKS ON ALL PHONES
+  // ⭐ FINAL REAL FORCED DOWNLOAD — FASTEST + MOBILE SAFE
   const forceDownload = async (fileUrl) => {
     try {
       const response = await fetch(fileUrl, {
         mode: "cors",
+        cache: "no-store",
+        referrerPolicy: "no-referrer",
         headers: {
           "Content-Type": "application/octet-stream",
         },
@@ -161,4 +163,4 @@ export default function Downloader() {
       )}
     </section>
   );
-        }
+}
