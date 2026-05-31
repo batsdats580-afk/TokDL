@@ -30,6 +30,7 @@ export default function Downloader() {
       username: data.data.author?.unique_id || "unknown",
       caption: data.data.title || "",
       videoUrl: data.data.hdplay || data.data.play || data.data.play_url,
+      audioUrl: data.data.music || null, // ⭐ MP3 AUDIO URL
       platform: "tiktok",
     };
   };
@@ -52,6 +53,7 @@ export default function Downloader() {
       username: item.username || "unknown",
       caption: item.title || "",
       videoUrl: item.url,
+      audioUrl: null, // IG API does not provide MP3
       platform: "instagram",
     };
   };
@@ -61,14 +63,10 @@ export default function Downloader() {
     setTimeout(() => setToast(""), 2500);
   };
 
-  const downloadDirect = (fileUrl, platform) => {
-    if (platform === "tiktok") {
-      showToast("Tip: Tap ⋮ → Download if the video opens.");
-    }
-
+  const downloadDirect = (fileUrl, filename) => {
     const a = document.createElement("a");
     a.href = fileUrl;
-    a.download = "video.mp4";
+    a.download = filename;
     a.target = "_blank";
     document.body.appendChild(a);
     a.click();
@@ -153,22 +151,32 @@ export default function Downloader() {
             {result.caption}
           </p>
 
-          {/* GREEN BUTTON */}
+          {/* GREEN BUTTON — MP4 */}
           <button
-            onClick={() => downloadDirect(result.videoUrl, result.platform)}
+            onClick={() => downloadDirect(result.videoUrl, "video.mp4")}
             className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition"
           >
             Save video to device
           </button>
 
+          {/* ORANGE BUTTON — MP3 */}
+          {result.audioUrl && (
+            <button
+              onClick={() => downloadDirect(result.audioUrl, "audio.mp3")}
+              className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold text-lg hover:bg-orange-600 transition mt-3"
+            >
+              Download Audio (MP3)
+            </button>
+          )}
+
           {/* RED INSTRUCTION TEXT */}
           {result.platform === "tiktok" && (
             <p className="text-sm font-semibold text-red-600 mt-3 text-center">
-              When the video opens, tap ⋮ then Download
+              If the video opens instead of downloading, tap ⋮ then Download
             </p>
           )}
         </div>
       )}
     </section>
   );
-}
+  }
