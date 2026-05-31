@@ -12,17 +12,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* Manifest */}
         <link rel="manifest" href="/manifest.json" />
-
-        {/* Theme */}
         <meta name="theme-color" content="#2563eb" />
-
-        {/* Required PWA meta tags */}
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-
-        {/* Correct icon path */}
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
 
@@ -35,7 +28,6 @@ export default function RootLayout({ children }) {
 
         <Footer />
 
-        {/* Service Worker Registration */}
         <script>
           {`
             if ("serviceWorker" in navigator) {
