@@ -4,46 +4,36 @@ import { useEffect, useState } from "react";
 
 export default function InstallPWA() {
   const [prompt, setPrompt] = useState(null);
-  const [isInstalled, setIsInstalled] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // Detect standalone mode (inside the app)
     if (window.matchMedia("(display-mode: standalone)").matches) {
       setIsStandalone(true);
     }
 
-    // Detect installation event
-    window.addEventListener("appinstalled", () => {
-      setIsInstalled(true);
-    });
-
-    // Capture install prompt
-    window.addEventListener("beforeinstallprompt", (e) => {
+    const handler = (e) => {
       e.preventDefault();
       setPrompt(e);
-    });
+    };
+
+    window.addEventListener("beforeinstallprompt", handler);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+    };
   }, []);
 
-  // If inside the installed app → show nothing
   if (isStandalone) return null;
 
   const installApp = () => {
-    if (prompt) {
-      prompt.prompt();
-    } else {
-      alert("If nothing happens, your browser is blocking the install prompt.");
-    }
-  };
-
-  const openApp = () => {
-    window.location.href = "/";
+    if (!prompt) return;
+    prompt.prompt();
   };
 
   return (
     <div className="w-full flex justify-center mt-4 mb-2">
       <button
-        onClick={isInstalled ? openApp : installApp}
+        onClick={installApp}
         className="
           bg-gradient-to-r from-[#ff0050] to-[#00f2ea]
           text-white font-bold
@@ -55,7 +45,7 @@ export default function InstallPWA() {
           transition-all
         "
       >
-        {isInstalled ? "Open TokDL App" : "Install TokDL App"}
+        Install TokDL App
       </button>
     </div>
   );
