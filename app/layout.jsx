@@ -25,6 +25,24 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
         <Header />
 
+        {/* ⭐ Banner 728x90 (Visible Ad) */}
+        <div className="flex justify-center my-4">
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                atOptions = {
+                  'key' : 'f7405c607167f1d8fcacc8f89106bf98',
+                  'format' : 'iframe',
+                  'height' : 90,
+                  'width' : 728,
+                  'params' : {}
+                };
+              `,
+            }}
+          />
+          <script src="https://www.highperformanceformat.com/f7405c607167f1d8fcacc8f89106bf98/invoke.js"></script>
+        </div>
+
         <main className="flex-1 flex justify-center px-4">
           <div className="w-full max-w-3xl py-10">{children}</div>
         </main>
