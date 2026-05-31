@@ -153,18 +153,18 @@ export default function Downloader() {
             {result.caption}
           </p>
 
+          {/* GREEN BUTTON */}
           <button
             onClick={() => downloadDirect(result.videoUrl, result.platform)}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition"
+            className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition"
           >
-            {result.platform === "tiktok"
-              ? "Download Video (tap ⋮ → Download)"
-              : "Download Video"}
+            Save video to device
           </button>
 
+          {/* RED INSTRUCTION TEXT */}
           {result.platform === "tiktok" && (
-            <p className="text-xs text-gray-500 mt-2 text-center">
-              If the video opens, tap ⋮ → Download.
+            <p className="text-sm font-semibold text-red-600 mt-3 text-center">
+              When the video opens, tap ⋮ then Download
             </p>
           )}
         </div>
