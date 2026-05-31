@@ -15,6 +15,20 @@ export default function Downloader() {
     return null;
   };
 
+  const detectInstagramType = (link) => {
+    const lower = link.toLowerCase();
+
+    if (lower.includes("/stories/") || lower.includes("/story/")) return "story";
+    if (lower.includes("/reel/")) return "reel";
+    if (lower.includes("/highlights/") || lower.includes("/highlight/"))
+      return "highlight";
+    if (lower.includes("/p/") || lower.includes("/tv/")) return "post";
+
+    // fallback
+    return "unknown";
+  };
+
+  // ✅ TikTok stays the same
   const fetchTikTok = async (link) => {
     const res = await fetch("https://www.tikwm.com/api/", {
       method: "POST",
@@ -30,30 +44,49 @@ export default function Downloader() {
       username: data.data.author?.unique_id || "unknown",
       caption: data.data.title || "",
       videoUrl: data.data.hdplay || data.data.play || data.data.play_url,
-      audioUrl: data.data.music || null, // ⭐ MP3 AUDIO URL
+      audioUrl: data.data.music || null, // MP3 AUDIO URL
       platform: "tiktok",
     };
   };
 
-  const fetchInstagram = async (link) => {
+  // ✅ Instagram via SnapInsta universal endpoint (stories, reels, posts, highlights)
+  const fetchInstagramUniversal = async (link) => {
+    const igType = detectInstagramType(link);
+
     const res = await fetch(
-      `https://api.igdownloader.app/api/v1/instagram?url=${encodeURIComponent(
-        link
-      )}`
+      `https://snapinsta.io/api?url=${encodeURIComponent(link)}`
     );
 
-    const data = await res.json();
-    if (!data || !data.data || !data.data[0])
-      throw new Error("Failed to fetch Instagram data");
+    if (!res.ok) throw new Error("Failed to fetch Instagram data");
 
-    const item = data.data[0];
+    const data = await res.json();
+
+    // NOTE:
+    // Because SnapInsta's exact JSON can vary, we normalize defensively.
+    // Adjust these mappings if you inspect the real response structure.
+
+    const media = Array.isArray(data.media) ? data.media : data.data || [];
+    if (!media || media.length === 0) {
+      throw new Error("No downloadable media found for this Instagram link.");
+    }
+
+    const first = media[0];
+
+    const isVideo =
+      first.type === "video" ||
+      first.is_video === true ||
+      (first.url && first.url.endsWith(".mp4"));
+
+    const videoUrl = isVideo ? first.url : null;
+    const imageUrl = !isVideo ? first.url : first.thumbnail || null;
 
     return {
-      thumbnail: item.thumbnail,
-      username: item.username || "unknown",
-      caption: item.title || "",
-      videoUrl: item.url,
-      audioUrl: null, // IG API does not provide MP3
+      thumbnail: first.thumbnail || imageUrl || videoUrl || "",
+      username: data.username || first.username || "unknown",
+      caption: data.caption || first.caption || "",
+      videoUrl,
+      imageUrl,
+      igType,
       platform: "instagram",
     };
   };
@@ -64,6 +97,8 @@ export default function Downloader() {
   };
 
   const downloadDirect = (fileUrl, filename) => {
+    if (!fileUrl) return;
+
     const a = document.createElement("a");
     a.href = fileUrl;
     a.download = filename;
@@ -93,8 +128,11 @@ export default function Downloader() {
       setLoading(true);
       let data;
 
-      if (platform === "tiktok") data = await fetchTikTok(url);
-      if (platform === "instagram") data = await fetchInstagram(url);
+      if (platform === "tiktok") {
+        data = await fetchTikTok(url);
+      } else if (platform === "instagram") {
+        data = await fetchInstagramUniversal(url);
+      }
 
       setResult(data);
     } catch (err) {
@@ -102,6 +140,37 @@ export default function Downloader() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const renderInstagramButtonLabel = (res) => {
+    if (!res || res.platform !== "instagram") return "Download";
+
+    const { igType, videoUrl, imageUrl } = res;
+
+    if (igType === "story") {
+      return videoUrl ? "Download Story (MP4)" : "Download Story (JPG)";
+    }
+
+    if (igType === "reel") {
+      return "Download Reel (MP4)";
+    }
+
+    if (igType === "highlight") {
+      return videoUrl ? "Download Highlight (MP4)" : "Download Highlight (JPG)";
+    }
+
+    if (igType === "post") {
+      if (videoUrl) return "Download Video (MP4)";
+      if (imageUrl) return "Download Photo (JPG)";
+      return "Download Post";
+    }
+
+    return "Download Media";
+  };
+
+  const getInstagramDownloadUrl = (res) => {
+    if (!res || res.platform !== "instagram") return null;
+    return res.videoUrl || res.imageUrl || null;
   };
 
   return (
@@ -114,14 +183,14 @@ export default function Downloader() {
 
       <form onSubmit={handleSubmit} className="space-y-3">
         <label className="block text-sm font-medium text-gray-700">
-          Paste TikTok or Instagram Reel
+          Paste TikTok or Instagram link
         </label>
 
         <input
           type="url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://www.tiktok.com/... or https://www.instagram.com/reel/..."
+          placeholder="https://www.tiktok.com/... or https://www.instagram.com/..."
           className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
@@ -130,7 +199,7 @@ export default function Downloader() {
           disabled={loading}
           className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition disabled:opacity-60"
         >
-          {loading ? "Fetching video..." : "Download"}
+          {loading ? "Fetching media..." : "Download"}
         </button>
       </form>
 
@@ -140,40 +209,65 @@ export default function Downloader() {
 
       {result && (
         <div className="mt-4 p-4 bg-white rounded-xl shadow-md">
-          <img
-            src={result.thumbnail}
-            alt="thumbnail"
-            className="w-full rounded-lg mb-3"
-          />
+          {result.thumbnail && (
+            <img
+              src={result.thumbnail}
+              alt="thumbnail"
+              className="w-full rounded-lg mb-3"
+            />
+          )}
 
           <p className="font-semibold text-sm">@{result.username}</p>
           <p className="text-gray-600 text-sm mb-3 line-clamp-3">
             {result.caption}
           </p>
 
-          {/* GREEN BUTTON — MP4 */}
-          <button
-            onClick={() => downloadDirect(result.videoUrl, "video.mp4")}
-            className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition"
-          >
-            Save video to device
-          </button>
+          {/* TIKTOK UI */}
+          {result.platform === "tiktok" && (
+            <>
+              <button
+                onClick={() => downloadDirect(result.videoUrl, "video.mp4")}
+                className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition"
+              >
+                Save video to device
+              </button>
 
-          {/* ORANGE BUTTON — MP3 */}
-          {result.audioUrl && (
-            <button
-              onClick={() => downloadDirect(result.audioUrl, "audio.mp3")}
-              className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold text-lg hover:bg-orange-600 transition mt-3"
-            >
-              Download Audio (MP3)
-            </button>
+              {result.audioUrl && (
+                <button
+                  onClick={() => downloadDirect(result.audioUrl, "audio.mp3")}
+                  className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold text-lg hover:bg-orange-600 transition mt-3"
+                >
+                  Download Audio (MP3)
+                </button>
+              )}
+
+              <p className="text-sm font-semibold text-red-600 mt-3 text-center">
+                If the video opens instead of downloading, tap ⋮ then Download
+              </p>
+            </>
           )}
 
-          {/* RED INSTRUCTION TEXT */}
-          {result.platform === "tiktok" && (
-            <p className="text-sm font-semibold text-red-600 mt-3 text-center">
-              If the video opens instead of downloading, tap ⋮ then Download
-            </p>
+          {/* INSTAGRAM UI */}
+          {result.platform === "instagram" && (
+            <>
+              <button
+                onClick={() =>
+                  downloadDirect(
+                    getInstagramDownloadUrl(result),
+                    result.igType === "post" && result.imageUrl
+                      ? "photo.jpg"
+                      : "video.mp4"
+                  )
+                }
+                className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition"
+              >
+                {renderInstagramButtonLabel(result)}
+              </button>
+
+              <p className="text-xs text-gray-500 mt-2 text-center">
+                Works for Instagram Stories, Reels, Posts, and Highlights.
+              </p>
+            </>
           )}
         </div>
       )}
