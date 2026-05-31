@@ -17,6 +17,9 @@ export default function RootLayout({ children }) {
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+        {/* ⭐ Adsterra Popunder Script */}
+        <script src="https://pl29603713.effectivecpmnetwork.com/6d/d6/ba/6dd6ba5493682d87d257268189048b54.js"></script>
       </head>
 
       <body className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
@@ -38,10 +41,6 @@ export default function RootLayout({ children }) {
             }
           `}
         </script>
-
-        {/* ⭐ Adsterra Script (place here) */}
-        <script src="https://pl29603713.effectivecpmnetwork.com/6d/d6/ba/6dd6ba5493682d87d257268189048b54.js"></script>
-
       </body>
     </html>
   );
