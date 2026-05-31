@@ -7,6 +7,7 @@ export default function Downloader() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [toast, setToast] = useState("");
 
   const detectPlatform = (link) => {
     if (link.includes("tiktok.com")) return "tiktok";
@@ -29,6 +30,7 @@ export default function Downloader() {
       username: data.data.author?.unique_id || "unknown",
       caption: data.data.title || "",
       videoUrl: data.data.hdplay || data.data.play || data.data.play_url,
+      platform: "tiktok",
     };
   };
 
@@ -50,11 +52,20 @@ export default function Downloader() {
       username: item.username || "unknown",
       caption: item.title || "",
       videoUrl: item.url,
+      platform: "instagram",
     };
   };
 
-  // ⭐ RELIABLE DOWNLOAD — WORKS ON ALL MOBILE BROWSERS
-  const downloadDirect = (fileUrl) => {
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 2500);
+  };
+
+  const downloadDirect = (fileUrl, platform) => {
+    if (platform === "tiktok") {
+      showToast("Tip: Tap ⋮ → Download if the video opens.");
+    }
+
     const a = document.createElement("a");
     a.href = fileUrl;
     a.download = "video.mp4";
@@ -96,7 +107,13 @@ export default function Downloader() {
   };
 
   return (
-    <section className="max-w-xl mx-auto mt-6">
+    <section className="max-w-xl mx-auto mt-6 relative">
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 rounded-full text-sm shadow-lg z-50">
+          {toast}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-3">
         <label className="block text-sm font-medium text-gray-700">
           Paste TikTok or Instagram Reel
@@ -137,11 +154,19 @@ export default function Downloader() {
           </p>
 
           <button
-            onClick={() => downloadDirect(result.videoUrl)}
+            onClick={() => downloadDirect(result.videoUrl, result.platform)}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition"
           >
-            Download Video
+            {result.platform === "tiktok"
+              ? "Download Video (tap ⋮ → Download)"
+              : "Download Video"}
           </button>
+
+          {result.platform === "tiktok" && (
+            <p className="text-xs text-gray-500 mt-2 text-center">
+              If the video opens, tap ⋮ → Download.
+            </p>
+          )}
         </div>
       )}
     </section>
