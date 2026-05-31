@@ -1,4 +1,4 @@
-          "use client";
+"use client";
 
 import { useState } from "react";
 
@@ -28,7 +28,7 @@ export default function Downloader() {
       thumbnail: data.data.cover,
       username: data.data.author?.unique_id || "unknown",
       caption: data.data.title || "",
-      videoUrl: data.data.play,
+      videoUrl: data.data.hdplay || data.data.play || data.data.play_url,
     };
   };
 
@@ -53,32 +53,15 @@ export default function Downloader() {
     };
   };
 
-  // ⭐ FINAL REAL FORCED DOWNLOAD — FASTEST + MOBILE SAFE
-  const forceDownload = async (fileUrl) => {
-    try {
-      const response = await fetch(fileUrl, {
-        mode: "cors",
-        cache: "no-store",
-        referrerPolicy: "no-referrer",
-        headers: {
-          "Content-Type": "application/octet-stream",
-        },
-      });
-
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = "video.mp4";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      window.URL.revokeObjectURL(blobUrl);
-    } catch (err) {
-      alert("Download failed. Try again.");
-    }
+  // ⭐ RELIABLE DOWNLOAD — WORKS ON ALL MOBILE BROWSERS
+  const downloadDirect = (fileUrl) => {
+    const a = document.createElement("a");
+    a.href = fileUrl;
+    a.download = "video.mp4";
+    a.target = "_blank";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   };
 
   const handleSubmit = async (e) => {
@@ -154,7 +137,7 @@ export default function Downloader() {
           </p>
 
           <button
-            onClick={() => forceDownload(result.videoUrl)}
+            onClick={() => downloadDirect(result.videoUrl)}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition"
           >
             Download Video
