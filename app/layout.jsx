@@ -28,6 +28,7 @@ export default function RootLayout({ children }) {
 
         <Footer />
 
+        {/* Service Worker */}
         <script>
           {`
             if ("serviceWorker" in navigator) {
@@ -37,6 +38,10 @@ export default function RootLayout({ children }) {
             }
           `}
         </script>
+
+        {/* ⭐ Adsterra Script (place here) */}
+        <script src="https://pl29603713.effectivecpmnetwork.com/6d/d6/ba/6dd6ba5493682d87d257268189048b54.js"></script>
+
       </body>
     </html>
   );
