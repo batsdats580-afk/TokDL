@@ -24,11 +24,10 @@ export default function Downloader() {
       return "highlight";
     if (lower.includes("/p/") || lower.includes("/tv/")) return "post";
 
-    // fallback
     return "unknown";
   };
 
-  // ✅ TikTok stays the same
+  // TikTok
   const fetchTikTok = async (link) => {
     const res = await fetch("https://www.tikwm.com/api/", {
       method: "POST",
@@ -44,12 +43,12 @@ export default function Downloader() {
       username: data.data.author?.unique_id || "unknown",
       caption: data.data.title || "",
       videoUrl: data.data.hdplay || data.data.play || data.data.play_url,
-      audioUrl: data.data.music || null, // MP3 AUDIO URL
+      audioUrl: data.data.music || null,
       platform: "tiktok",
     };
   };
 
-  // ✅ Instagram via SnapInsta universal endpoint (stories, reels, posts, highlights)
+  // Instagram
   const fetchInstagramUniversal = async (link) => {
     const igType = detectInstagramType(link);
 
@@ -60,10 +59,6 @@ export default function Downloader() {
     if (!res.ok) throw new Error("Failed to fetch Instagram data");
 
     const data = await res.json();
-
-    // NOTE:
-    // Because SnapInsta's exact JSON can vary, we normalize defensively.
-    // Adjust these mappings if you inspect the real response structure.
 
     const media = Array.isArray(data.media) ? data.media : data.data || [];
     if (!media || media.length === 0) {
@@ -96,9 +91,14 @@ export default function Downloader() {
     setTimeout(() => setToast(""), 2500);
   };
 
+  // ⭐ UPDATED WITH YOUR SMARTLINK
   const downloadDirect = (fileUrl, filename) => {
     if (!fileUrl) return;
 
+    // ⭐ Monetag SmartLink (opens in new tab, once per video)
+    window.open("https://omg10.com/4/11083799", "_blank");
+
+    // ⭐ Continue with real download
     const a = document.createElement("a");
     a.href = fileUrl;
     a.download = filename;
@@ -273,4 +273,4 @@ export default function Downloader() {
       )}
     </section>
   );
-  }
+}
