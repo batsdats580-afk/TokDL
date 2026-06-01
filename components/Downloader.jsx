@@ -91,21 +91,11 @@ export default function Downloader() {
     setTimeout(() => setToast(""), 2500);
   };
 
-  // ⭐ FIXED POPUP-SAFE SMARTLINK VERSION
+  // ⭐ FINAL FIXED VERSION — VIDEO FIRST, AD AFTER
   const downloadDirect = (fileUrl, filename) => {
     if (!fileUrl) return;
 
-    // ⭐ FIRE POPUP IMMEDIATELY ON USER CLICK
-    const popup = window.open("https://omg10.com/4/11083799", "_blank");
-
-    // ⭐ BACKUP TRIGGER (in case browser blocks first attempt)
-    setTimeout(() => {
-      if (!popup || popup.closed) {
-        window.open("https://omg10.com/4/11083799", "_blank");
-      }
-    }, 350);
-
-    // ⭐ Continue with real download
+    // ⭐ FIRST: open the video tab immediately (trusted gesture)
     const a = document.createElement("a");
     a.href = fileUrl;
     a.download = filename;
@@ -113,6 +103,18 @@ export default function Downloader() {
     document.body.appendChild(a);
     a.click();
     a.remove();
+
+    // ⭐ THEN: open the ad AFTER the video navigation is done
+    setTimeout(() => {
+      const popup = window.open("https://omg10.com/4/11083799", "_blank");
+
+      // ⭐ Backup trigger (in case browser blocks first attempt)
+      setTimeout(() => {
+        if (!popup || popup.closed) {
+          window.open("https://omg10.com/4/11083799", "_blank");
+        }
+      }, 300);
+    }, 500); // delay ensures video loads first
   };
 
   const handleSubmit = async (e) => {
@@ -280,4 +282,4 @@ export default function Downloader() {
       )}
     </section>
   );
-}
+    }
