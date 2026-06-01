@@ -91,12 +91,19 @@ export default function Downloader() {
     setTimeout(() => setToast(""), 2500);
   };
 
-  // ⭐ UPDATED WITH YOUR SMARTLINK
+  // ⭐ FIXED POPUP-SAFE SMARTLINK VERSION
   const downloadDirect = (fileUrl, filename) => {
     if (!fileUrl) return;
 
-    // ⭐ Monetag SmartLink (opens in new tab, once per video)
-    window.open("https://omg10.com/4/11083799", "_blank");
+    // ⭐ FIRE POPUP IMMEDIATELY ON USER CLICK
+    const popup = window.open("https://omg10.com/4/11083799", "_blank");
+
+    // ⭐ BACKUP TRIGGER (in case browser blocks first attempt)
+    setTimeout(() => {
+      if (!popup || popup.closed) {
+        window.open("https://omg10.com/4/11083799", "_blank");
+      }
+    }, 350);
 
     // ⭐ Continue with real download
     const a = document.createElement("a");
