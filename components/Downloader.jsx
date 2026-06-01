@@ -27,7 +27,6 @@ export default function Downloader() {
     return "unknown";
   };
 
-  // TikTok
   const fetchTikTok = async (link) => {
     const res = await fetch("https://www.tikwm.com/api/", {
       method: "POST",
@@ -48,7 +47,6 @@ export default function Downloader() {
     };
   };
 
-  // Instagram
   const fetchInstagramUniversal = async (link) => {
     const igType = detectInstagramType(link);
 
@@ -91,30 +89,14 @@ export default function Downloader() {
     setTimeout(() => setToast(""), 2500);
   };
 
-  // ⭐ FINAL FIXED VERSION — VIDEO FIRST, AD AFTER
+  // ⭐ NEW VERSION — USE REDIRECT WRAPPER
   const downloadDirect = (fileUrl, filename) => {
     if (!fileUrl) return;
 
-    // ⭐ FIRST: open the video tab immediately (trusted gesture)
-    const a = document.createElement("a");
-    a.href = fileUrl;
-    a.download = filename;
-    a.target = "_blank";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    // Open redirect wrapper instead of CDN directly
+    const redirectUrl = `/redirect?file=${encodeURIComponent(fileUrl)}`;
 
-    // ⭐ THEN: open the ad AFTER the video navigation is done
-    setTimeout(() => {
-      const popup = window.open("https://omg10.com/4/11083799", "_blank");
-
-      // ⭐ Backup trigger (in case browser blocks first attempt)
-      setTimeout(() => {
-        if (!popup || popup.closed) {
-          window.open("https://omg10.com/4/11083799", "_blank");
-        }
-      }, 300);
-    }, 500); // delay ensures video loads first
+    window.open(redirectUrl, "_blank");
   };
 
   const handleSubmit = async (e) => {
