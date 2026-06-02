@@ -99,7 +99,7 @@ export async function POST(req) {
 }
 
 // ----------------------------------------------------
-// ⭐ NEW: GET HANDLER FOR FORCING BROWSER DOWNLOADS
+// ⭐ BULLETPROOF GET HANDLER: STOPS BROWSER STREAMING & BACKEND CRASHES
 // ----------------------------------------------------
 export async function GET(req) {
   try {
@@ -111,32 +111,45 @@ export async function GET(req) {
       return new Response("Missing url parameter", { status: 400 });
     }
 
-    // Fetch the raw video from the CDN (works for both TikTok and Instagram links)
-    const videoResponse = await fetch(videoUrl);
+    // 1. Fetch video with a browser User-Agent to prevent TikTok from blocking Vercel
+    const videoResponse = await fetch(videoUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      }
+    });
     
+    // Safety Fallback: If Vercel fails to fetch from the CDN, redirect them to the raw URL so the app doesn't break
     if (!videoResponse.ok) {
-      return new Response("Failed to fetch video file from CDN source", { status: 500 });
+      console.error(`CDN fetch failed with status: ${videoResponse.status}`);
+      return Response.redirect(videoUrl);
     }
 
-    // Get the video as an ArrayBuffer and turn it into a Buffer
+    // 2. Read the raw binary data
     const arrayBuffer = await videoResponse.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Sanitize title for filename usage
-    const safeTitle = encodeURIComponent(title.replace(/[^a-zA-Z0-9]/g, "_").slice(0, 50));
-    const filename = `${safeTitle}.mp4`;
+    // 3. Clean up the filename so special characters or emojis don't break headers
+    const safeTitle = title.replace(/[^a-zA-Z0-9]/g, "_").slice(0, 50) || "download";
+    const filename = safeTitle.endsWith(".mp4") || safeTitle.endsWith(".mp3") ? safeTitle : `${safeTitle}.mp4`;
 
-    // Return the video data back with headers that force the mobile or desktop browser to download
+    // 4. Force a hard file download instead of a video stream
     return new Response(buffer, {
       status: 200,
       headers: {
-        "Content-Type": "video/mp4",
-        "Content-Disposition": `attachment; filename="${filename}"`,
+        "Content-Type": "application/octet-stream", // Tells the mobile browser to force download, not play
+        "Content-Disposition": `attachment; filename="${encodeURIComponent(filename)}"`,
+        "Content-Length": buffer.length.toString(), // Instantly updates the notification download status bar
       },
     });
 
   } catch (err) {
     console.error("Forced download routing error:", err);
-    return new Response("Internal server error downloading video", { status: 500 });
+    
+    // Ultimate safety fallback loop
+    const { searchParams } = new URL(req.url);
+    const videoUrl = searchParams.get("url");
+    if (videoUrl) return Response.redirect(videoUrl);
+    
+    return new Response("Internal server error", { status: 500 });
   }
 }
