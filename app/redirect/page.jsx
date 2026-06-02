@@ -8,9 +8,6 @@ export default function RedirectPage({ searchParams }) {
   useEffect(() => {
     if (!file) return;
 
-    // ⭐ Step 1: Open the CDN video immediately
-    window.location.href = file;
-
     // ⭐ Step 2: After video loads, open the ad
     setTimeout(() => {
       const popup = window.open("https://omg10.com/4/11083799", "_blank");
