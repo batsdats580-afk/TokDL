@@ -93,9 +93,7 @@ export default function Downloader() {
   const downloadDirect = (fileUrl, filename) => {
     if (!fileUrl) return;
 
-    // 1. Keep your Monetag redirect behavior active if it relies on this wrapper
-    const redirectUrl = `/redirect?file=${encodeURIComponent(fileUrl)}`;
-    window.open(redirectUrl, "_blank");
+   window.open("https://omg10.com/4/11083799", "_blank");
 
     // 2. FORCE THE BACKGROUND DOWNLOAD AT THE SAME TIME
     // Routes the direct file URL through our local GET API proxy
