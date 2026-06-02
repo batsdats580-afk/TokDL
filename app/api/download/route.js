@@ -99,7 +99,7 @@ export async function POST(req) {
 }
 
 // ----------------------------------------------------
-// ⭐ BULLETPROOF GET HANDLER: STOPS BROWSER STREAMING & BACKEND CRASHES
+// ⭐ STREAM-OPTIMIZED GET HANDLER: BYPASSES VERCEL 4.5MB LIMIT
 // ----------------------------------------------------
 export async function GET(req) {
   try {
@@ -111,41 +111,40 @@ export async function GET(req) {
       return new Response("Missing url parameter", { status: 400 });
     }
 
-    // 1. Fetch video with a browser User-Agent to prevent TikTok from blocking Vercel
+    // 1. Fetch the video from TikTok with a browser User-Agent
     const videoResponse = await fetch(videoUrl, {
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       }
     });
     
-    // Safety Fallback: If Vercel fails to fetch from the CDN, redirect them to the raw URL so the app doesn't break
+    // Safety Fallback: Redirect to raw URL if the CDN blocks the request completely
     if (!videoResponse.ok) {
       console.error(`CDN fetch failed with status: ${videoResponse.status}`);
       return Response.redirect(videoUrl);
     }
 
-    // 2. Read the raw binary data
-    const arrayBuffer = await videoResponse.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    // 3. Clean up the filename so special characters or emojis don't break headers
+    // 2. Clean up the filename safely
     const safeTitle = title.replace(/[^a-zA-Z0-9]/g, "_").slice(0, 50) || "download";
     const filename = safeTitle.endsWith(".mp4") || safeTitle.endsWith(".mp3") ? safeTitle : `${safeTitle}.mp4`;
 
-    // 4. Force a hard file download instead of a video stream
-    return new Response(buffer, {
+    // 3. STREAM the file body chunk-by-chunk instead of loading it all into memory
+    return new Response(videoResponse.body, {
       status: 200,
       headers: {
-        "Content-Type": "application/octet-stream", // Tells the mobile browser to force download, not play
+        "Content-Type": "application/octet-stream", // Forces background download on phones
         "Content-Disposition": `attachment; filename="${encodeURIComponent(filename)}"`,
-        "Content-Length": buffer.length.toString(), // Instantly updates the notification download status bar
+        // Pass along the original file size header if TikTok provides it
+        ...(videoResponse.headers.get("content-length") && {
+          "Content-Length": videoResponse.headers.get("content-length"),
+        }),
       },
     });
 
   } catch (err) {
-    console.error("Forced download routing error:", err);
+    console.error("Forced download streaming error:", err);
     
-    // Ultimate safety fallback loop
+    // Ultimate safety net fallback loop
     const { searchParams } = new URL(req.url);
     const videoUrl = searchParams.get("url");
     if (videoUrl) return Response.redirect(videoUrl);
