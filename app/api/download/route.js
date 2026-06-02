@@ -97,3 +97,46 @@ export async function POST(req) {
     );
   }
 }
+
+// ----------------------------------------------------
+// ⭐ NEW: GET HANDLER FOR FORCING BROWSER DOWNLOADS
+// ----------------------------------------------------
+export async function GET(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const videoUrl = searchParams.get("url");
+    const title = searchParams.get("title") || "video";
+
+    if (!videoUrl) {
+      return new Response("Missing url parameter", { status: 400 });
+    }
+
+    // Fetch the raw video from the CDN (works for both TikTok and Instagram links)
+    const videoResponse = await fetch(videoUrl);
+    
+    if (!videoResponse.ok) {
+      return new Response("Failed to fetch video file from CDN source", { status: 500 });
+    }
+
+    // Get the video as an ArrayBuffer and turn it into a Buffer
+    const arrayBuffer = await videoResponse.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Sanitize title for filename usage
+    const safeTitle = encodeURIComponent(title.replace(/[^a-zA-Z0-9]/g, "_").slice(0, 50));
+    const filename = `${safeTitle}.mp4`;
+
+    // Return the video data back with headers that force the mobile or desktop browser to download
+    return new Response(buffer, {
+      status: 200,
+      headers: {
+        "Content-Type": "video/mp4",
+        "Content-Disposition": `attachment; filename="${filename}"`,
+      },
+    });
+
+  } catch (err) {
+    console.error("Forced download routing error:", err);
+    return new Response("Internal server error downloading video", { status: 500 });
+  }
+}
