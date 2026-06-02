@@ -89,15 +89,27 @@ export default function Downloader() {
     setTimeout(() => setToast(""), 2500);
   };
 
-  // ⭐ NEW VERSION — USE REDIRECT WRAPPER
+    // ⭐ UPDATED VERSION — FORCES BACKGROUND BROWSER DOWNLOAD via API
   const downloadDirect = (fileUrl, filename) => {
     if (!fileUrl) return;
 
-    // Open redirect wrapper instead of CDN directly
+    // 1. Keep your Monetag redirect behavior active if it relies on this wrapper
     const redirectUrl = `/redirect?file=${encodeURIComponent(fileUrl)}`;
-
     window.open(redirectUrl, "_blank");
+
+    // 2. FORCE THE BACKGROUND DOWNLOAD AT THE SAME TIME
+    // Routes the direct file URL through our local GET API proxy
+    const proxyUrl = `/api/download?url=${encodeURIComponent(fileUrl)}&title=${encodeURIComponent(filename || 'media')}`;
+
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.href = proxyUrl;
+    downloadAnchor.setAttribute('download', ''); 
+    document.body.appendChild(downloadAnchor);
+    
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
