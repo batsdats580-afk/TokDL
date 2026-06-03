@@ -12,11 +12,13 @@ export default function HomePage() {
 
         <header className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
-            TikTok & Instagram Downloader – Reels, Stories, Posts, Highlights, MP3 (No Watermark)
+            TikTok VIDEO Downloader (No Watermark) AND MP3 
           </h1>
           <p className="text-gray-700">
-            Download TikTok videos, Instagram Reels, Stories, Posts, and Highlights in HD without watermark.
-            Extract MP3 audio from TikTok instantly. 100% free, no login required.
+            Download TikTok videos in HD without watermark.
+            Extract MP3 audio from TikTok instantly.
+
+            
           </p>
         </header>
 
@@ -27,23 +29,32 @@ export default function HomePage() {
       <section className="max-w-4xl mx-auto px-4 pb-16 text-gray-800 space-y-6">
 
         <h2 className="text-2xl font-bold mt-10">
-          Free TikTok & Instagram Downloader – Reels, Stories, Posts, Highlights, MP3
+
+          TAP Save Video after fetching 
+          Then click " Download again " notification sent by browser or app if installed
+          
+          TikTok Videos Downloader And Sound or MP3 Extracting 
+          
         </h2>
         <p>
-          This tool allows you to download TikTok videos and Instagram content in the highest quality.
+          IMPORTANT NOTICE:
+          the video is first cleaned and downloaded on our side before serving it 
+          Reason for " Download again" display 
+          
+          This tool allows you to download TikTok videos content in the highest quality.
           Whether you're saving Reels, Stories, Posts, or Highlights, everything is processed instantly
           with no watermark and no login required. You can also extract MP3 audio from TikTok videos
           for edits, remixes, or background music.
         </p>
 
         <p>
-          Simply paste any TikTok or Instagram link into the box above. Our system automatically detects
+          Simply paste any TikTok  link into the box above. Our system automatically detects
           the platform and content type — Reel, Story, Post, or Highlight — and gives you the correct
           download options. Choose between HD video (MP4), photo (JPG), or audio-only (MP3).
         </p>
 
         <h3 className="text-xl font-semibold mt-6">
-          Why use our TikTok & Instagram Downloader?
+          Why use our TikTok Downloader?
         </h3>
         <p>
           Unlike the official apps, TikTok adds a watermark and Instagram does not allow direct downloads.
