@@ -36,7 +36,6 @@ export default function HomePage() {
   Then click " Download again " notification sent by browser or app if installed
           
           
-          TikTok Videos Downloader And Sound or MP3 Extracting 
           
         </h2>
         <p>
@@ -44,6 +43,7 @@ export default function HomePage() {
           the video is first cleaned and downloaded on 
           our side before serving it 
           Reason for " Download again" display 
+
 
           
           This tool allows you to download TikTok videos content in the highest quality.
