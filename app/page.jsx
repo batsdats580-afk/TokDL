@@ -12,13 +12,14 @@ export default function HomePage() {
 
         <header className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
-            TikTok VIDEO Downloader   (No Watermark) AND MP3 
+          TikTok VIDEO Downloader   (No Watermark) AND MP3 
           </h1>
           <p className="text-gray-700">
-            Download TikTok videos in HD without watermark.
-            
-            Extract MP3 audio from TikTok instantly.
-
+           TAP Save Video after fetching 
+          
+  Then click " Download again " notification sent by browser or app if installed
+           
+            Download Starts instantly 
             
           </p>
         </header>
