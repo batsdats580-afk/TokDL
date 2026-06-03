@@ -89,7 +89,7 @@ export default function Downloader() {
     setTimeout(() => setToast(""), 2500);
   };
 
-    / ⭐ UPDATED VERSION — FORCES BACKGROUND BROWSER DOWNLOAD via API
+    // ⭐ UPDATED VERSION — FORCES BACKGROUND BROWSER DOWNLOAD via API
   const downloadDirect = (fileUrl, filename) => {
     if (!fileUrl) return;
 
