@@ -1,3 +1,5 @@
+export const runtime = "edge";
+
 export async function POST(req) {
   try {
     const { url } = await req.json();
@@ -111,16 +113,17 @@ export async function GET(req) {
       return new Response("Missing url parameter", { status: 400 });
     }
 
-    // 1. Fetch the video from TikTok with a browser User-Agent
+    // 1. Fetch the video from the external source
     const videoResponse = await fetch(videoUrl, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Accept": "*/*",
       }
     });
     
-    // Safety Fallback: Redirect to raw URL if the CDN blocks the request completely
+    // Safety Fallback: Redirect to raw URL if the CDN blocks the request
     if (!videoResponse.ok) {
-      console.error(`CDN fetch failed with status: ${videoResponse.status}`);
+      console.error(`Fetch failed with status: ${videoResponse.status}`);
       return Response.redirect(videoUrl);
     }
 
@@ -128,23 +131,20 @@ export async function GET(req) {
     const safeTitle = title.replace(/[^a-zA-Z0-9]/g, "_").slice(0, 50) || "download";
     const filename = safeTitle.endsWith(".mp4") || safeTitle.endsWith(".mp3") ? safeTitle : `${safeTitle}.mp4`;
 
-    // 3. STREAM the file body chunk-by-chunk instead of loading it all into memory
+    // 3. STREAM the file body back to the frontend Blob
     return new Response(videoResponse.body, {
       status: 200,
       headers: {
-        "Content-Type": "application/octet-stream", // Forces background download on phones
-        "Content-Disposition": `attachment; filename="${encodeURIComponent(filename)}"`,
-        // Pass along the original file size header if TikTok provides it
-        ...(videoResponse.headers.get("content-length") && {
-          "Content-Length": videoResponse.headers.get("content-length"),
-        }),
+        "Content-Type": "application/octet-stream", 
+        "Content-Disposition": `attachment; filename="${filename}"`,
+        "Access-Control-Allow-Origin": "*", // Prevents CORS blocking in browser
       },
     });
 
   } catch (err) {
     console.error("Forced download streaming error:", err);
     
-    // Ultimate safety net fallback loop
+    // Ultimate safety net fallback: just redirect to the video
     const { searchParams } = new URL(req.url);
     const videoUrl = searchParams.get("url");
     if (videoUrl) return Response.redirect(videoUrl);
