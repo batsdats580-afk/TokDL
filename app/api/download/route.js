@@ -1,3 +1,75 @@
+export async function GET(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+
+    const videoUrl = searchParams.get("url");
+    const title = searchParams.get("title") || "video.mp4";
+
+    if (!videoUrl) {
+      return new Response("Missing url parameter", {
+        status: 400,
+      });
+    }
+
+    const videoResponse = await fetch(videoUrl, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      },
+    });
+
+    if (!videoResponse.ok) {
+      return new Response(
+        JSON.stringify({
+          error: `CDN fetch failed (${videoResponse.status})`,
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const safeTitle =
+      title.replace(/[^a-zA-Z0-9._-]/g, "_") || "video.mp4";
+
+    return new Response(videoResponse.body, {
+      status: 200,
+      headers: {
+        "Content-Type":
+          videoResponse.headers.get("content-type") ||
+          "application/octet-stream",
+
+        "Content-Disposition":
+          `attachment; filename="${safeTitle}"`,
+
+        "Cache-Control": "no-store",
+
+        ...(videoResponse.headers.get("content-length") && {
+          "Content-Length":
+            videoResponse.headers.get("content-length"),
+        }),
+      },
+    });
+  } catch (err) {
+    console.error("Download route error:", err);
+
+    return new Response(
+      JSON.stringify({
+        error: "Download failed",
+      }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+}
+
 export async function POST(req) {
   try {
     const { url } = await req.json();
