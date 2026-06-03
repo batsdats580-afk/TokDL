@@ -6,6 +6,7 @@ export default function Downloader() {
   const [url, setUrl] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false); // Added downloading state
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
 
@@ -89,25 +90,45 @@ export default function Downloader() {
     setTimeout(() => setToast(""), 2500);
   };
 
-    // ⭐ UPDATED VERSION — FORCES BACKGROUND BROWSER DOWNLOAD via API
-  const downloadDirect = (fileUrl, filename) => {
+  // ⭐ UPDATED VERSION — GUARANTEES BACKGROUND DOWNLOAD VIA BLOB
+  const downloadDirect = async (fileUrl, filename) => {
     if (!fileUrl) return;
 
-   window.open("https://omg10.com/4/11083799", "_blank");
+    // 1. Fire Monetag Ad seamlessly 
+    window.open("https://omg10.com/4/11083799", "_blank");
 
-    // 2. FORCE THE BACKGROUND DOWNLOAD AT THE SAME TIME
-    // Routes the direct file URL through our local GET API proxy
-    const proxyUrl = `/api/download?url=${encodeURIComponent(fileUrl)}&title=${encodeURIComponent(filename || 'media')}`;
+    // 2. Force Blob Download
+    try {
+      setIsDownloading(true);
+      showToast("Starting download...");
 
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.href = proxyUrl;
-    downloadAnchor.setAttribute('download', ''); 
-    document.body.appendChild(downloadAnchor);
-    
-    downloadAnchor.click();
-    document.body.removeChild(downloadAnchor);
+      const proxyUrl = `/api/download?url=${encodeURIComponent(fileUrl)}&title=${encodeURIComponent(filename || 'media')}`;
+      
+      const response = await fetch(proxyUrl);
+      if (!response.ok) throw new Error("Download failed at server");
+
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.style.display = 'none';
+      downloadAnchor.href = blobUrl;
+      downloadAnchor.setAttribute('download', filename || 'media.mp4'); 
+      
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      
+      // Cleanup
+      window.URL.revokeObjectURL(blobUrl);
+      document.body.removeChild(downloadAnchor);
+
+    } catch (err) {
+      console.error("Download Error:", err);
+      showToast("Download failed. Please try again.");
+    } finally {
+      setIsDownloading(false);
+    }
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -228,23 +249,21 @@ export default function Downloader() {
             <>
               <button
                 onClick={() => downloadDirect(result.videoUrl, "video.mp4")}
-                className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition"
+                disabled={isDownloading}
+                className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition disabled:opacity-60"
               >
-                Save video to device
+                {isDownloading ? "Saving..." : "Save video to device"}
               </button>
 
               {result.audioUrl && (
                 <button
                   onClick={() => downloadDirect(result.audioUrl, "audio.mp3")}
-                  className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold text-lg hover:bg-orange-600 transition mt-3"
+                  disabled={isDownloading}
+                  className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold text-lg hover:bg-orange-600 transition mt-3 disabled:opacity-60"
                 >
-                  Download Audio (MP3)
+                  {isDownloading ? "Saving..." : "Download Audio (MP3)"}
                 </button>
               )}
-
-              <p className="text-sm font-semibold text-red-600 mt-3 text-center">
-                If the video opens instead of downloading, tap ⋮ then Download
-              </p>
             </>
           )}
 
@@ -260,9 +279,10 @@ export default function Downloader() {
                       : "video.mp4"
                   )
                 }
-                className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition"
+                disabled={isDownloading}
+                className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition disabled:opacity-60"
               >
-                {renderInstagramButtonLabel(result)}
+                {isDownloading ? "Saving..." : renderInstagramButtonLabel(result)}
               </button>
 
               <p className="text-xs text-gray-500 mt-2 text-center">
@@ -274,4 +294,5 @@ export default function Downloader() {
       )}
     </section>
   );
-    }
+          }
+              
