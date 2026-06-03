@@ -90,12 +90,30 @@ export default function Downloader() {
     setTimeout(() => setToast(""), 2500);
   };
 
-  // ⭐ UPDATED VERSION — GUARANTEES BACKGROUND DOWNLOAD VIA BLOB
-  const downloadDirect = async (fileUrl, filename) => {
+    // ⭐ UPDATED: NATIVE OS DOWNLOAD TRIGGER
+  const downloadDirect = (fileUrl, filename) => {
     if (!fileUrl) return;
 
-    // 1. Fire Monetag Ad seamlessly 
+    // 1. Fire Monetag Ad in a new tab (User stays on your page)
     window.open("https://omg10.com/4/11083799", "_blank");
+
+    // 2. Trigger the native browser download
+    // Because your route.js sends 'Content-Disposition: attachment', 
+    // the phone will ignore the navigation and just start the download.
+    const proxyUrl = `/api/download?url=${encodeURIComponent(fileUrl)}&title=${encodeURIComponent(filename || 'media')}`;
+    
+    // We use a hidden iframe to prevent the page from navigating away
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = proxyUrl;
+    document.body.appendChild(iframe);
+    
+    // Cleanup the iframe after a few seconds
+    setTimeout(() => {
+      document.body.removeChild(iframe);
+    }, 5000);
+  };
+  
 
     // 2. Force Blob Download
     try {
