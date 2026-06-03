@@ -114,40 +114,6 @@ export default function Downloader() {
     }, 5000);
   };
   
-
-    // 2. Force Blob Download
-    try {
-      setIsDownloading(true);
-      showToast("Starting download...");
-
-      const proxyUrl = `/api/download?url=${encodeURIComponent(fileUrl)}&title=${encodeURIComponent(filename || 'media')}`;
-      
-      const response = await fetch(proxyUrl);
-      if (!response.ok) throw new Error("Download failed at server");
-
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.style.display = 'none';
-      downloadAnchor.href = blobUrl;
-      downloadAnchor.setAttribute('download', filename || 'media.mp4'); 
-      
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      
-      // Cleanup
-      window.URL.revokeObjectURL(blobUrl);
-      document.body.removeChild(downloadAnchor);
-
-    } catch (err) {
-      console.error("Download Error:", err);
-      showToast("Download failed. Please try again.");
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
