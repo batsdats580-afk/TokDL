@@ -12,10 +12,11 @@ export default function HomePage() {
 
         <header className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
-            TikTok VIDEO Downloader (No Watermark) AND MP3 
+            TikTok VIDEO Downloader   (No Watermark) AND MP3 
           </h1>
           <p className="text-gray-700">
             Download TikTok videos in HD without watermark.
+            
             Extract MP3 audio from TikTok instantly.
 
             
@@ -30,16 +31,20 @@ export default function HomePage() {
 
         <h2 className="text-2xl font-bold mt-10">
 
-          TAP Save Video after fetching 
-          Then click " Download again " notification sent by browser or app if installed
+  TAP Save Video after fetching 
+          
+  Then click " Download again " notification sent by browser or app if installed
+          
           
           TikTok Videos Downloader And Sound or MP3 Extracting 
           
         </h2>
         <p>
           IMPORTANT NOTICE:
-          the video is first cleaned and downloaded on our side before serving it 
+          the video is first cleaned and downloaded on 
+          our side before serving it 
           Reason for " Download again" display 
+
           
           This tool allows you to download TikTok videos content in the highest quality.
           Whether you're saving Reels, Stories, Posts, or Highlights, everything is processed instantly
