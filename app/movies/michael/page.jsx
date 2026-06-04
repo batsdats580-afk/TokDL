@@ -15,63 +15,40 @@ export default function MichaelMoviePage() {
     >
       <div
         style={{
-          maxWidth: "900px",
           width: "100%",
-          display: "grid",
-          gridTemplateColumns: "1.1fr 1.4fr",
-          gap: "24px",
-          borderRadius: "18px",
+          maxWidth: "900px",
           background:
             "radial-gradient(circle at top, #1b2340 0, #050814 55%, #02030a 100%)",
           boxShadow: "0 18px 40px rgba(0,0,0,0.65)",
-          padding: "24px",
+          borderRadius: "18px",
+          padding: "20px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "20px",
         }}
       >
-        {/* Poster */}
+        {/* POSTER */}
         <div
           style={{
-            position: "relative",
+            width: "100%",
             borderRadius: "16px",
             overflow: "hidden",
             boxShadow: "0 12px 30px rgba(0,0,0,0.8)",
           }}
         >
           <img
-            src="/posters/michael.jpg" // <- put your real poster here
+            src="/posters/michael.jpg"
             alt="Michael Movie Poster"
             style={{
               width: "100%",
-              height: "100%",
-              objectFit: "cover",
+              height: "auto",
               display: "block",
             }}
           />
-          <div
-            style={{
-              position: "absolute",
-              bottom: "12px",
-              left: "12px",
-              padding: "6px 10px",
-              borderRadius: "999px",
-              background: "rgba(0,0,0,0.75)",
-              fontSize: "12px",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-            }}
-          >
-            HD • 1080p • Streaming
-          </div>
         </div>
 
-        {/* Info + Button */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "14px",
-            justifyContent: "center",
-          }}
-        >
+        {/* INFO SECTION */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
           <h1
             style={{
               fontSize: "26px",
@@ -88,6 +65,7 @@ export default function MichaelMoviePage() {
               gap: "10px",
               fontSize: "13px",
               opacity: 0.9,
+              flexWrap: "wrap",
             }}
           >
             <span>⭐ 8.7/10 IMDb</span>
@@ -107,7 +85,7 @@ export default function MichaelMoviePage() {
           >
             Michael follows a mysterious man drawn into a dangerous web of crime,
             loyalty and revenge. As his past collides with the present, every
-            decision pulls him deeper into a world where the trust is a luxury and
+            decision pulls him deeper into a world where trust is a luxury and
             survival is never guaranteed.
           </p>
 
@@ -194,4 +172,4 @@ export default function MichaelMoviePage() {
       </div>
     </main>
   );
-              }
+}
