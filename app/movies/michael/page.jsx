@@ -107,7 +107,7 @@ export default function MichaelMoviePage() {
           >
             Michael follows a mysterious man drawn into a dangerous web of crime,
             loyalty and revenge. As his past collides with the present, every
-            decision pulls him deeper into a world where trust is a luxury and
+            decision pulls him deeper into a world where the trust is a luxury and
             survival is never guaranteed.
           </p>
 
