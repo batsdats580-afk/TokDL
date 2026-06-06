@@ -69,7 +69,7 @@ export default function SportsLanding() {
       </div>
 
       {/* APP HEADER */}
-      <div style={{ padding: "20px", marginTop: "-32px" }}>
+      <div style={{ padding: "20px", marginTop: "-31px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
           <img
             src="/sports/app-icon.png"
