@@ -54,22 +54,22 @@ export default function SportsLanding() {
           }}
         />
 
-        {/* OVERLAY GRADIENT */}
+        {/* STRONGER OVERLAY GRADIENT */}
         <div
           style={{
             position: "absolute",
             bottom: 0,
             left: 0,
             right: 0,
-            height: "45%",
+            height: "55%",
             background:
-              "linear-gradient(to top, rgba(5,8,20,1), rgba(5,8,20,0))",
+              "linear-gradient(to top, rgba(5,8,20,1), rgba(5,8,20,0.4), rgba(5,8,20,0))",
           }}
         />
       </div>
 
       {/* APP HEADER */}
-      <div style={{ padding: "20px", marginTop: "-40px" }}>
+      <div style={{ padding: "20px", marginTop: "-60px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
           <img
             src="/sports/app-icon.png"
@@ -80,14 +80,14 @@ export default function SportsLanding() {
               borderRadius: "16px",
               boxShadow: "0 8px 20px rgba(0,0,0,0.6)",
               objectFit: "cover",
-              background:
-                "radial-gradient(circle at 0% 0%, #00ff9d, #00c2ff)",
             }}
           />
 
           <div>
-            <h1 style={{ margin: 0, fontSize: "24px" }}>LiveSports Mobile</h1>
-            <p style={{ margin: "4px 0 0", opacity: 0.7, fontSize: "13px" }}>
+            <h1 style={{ margin: 0, fontSize: "26px", fontWeight: 800 }}>
+              LiveSports Mobile
+            </h1>
+            <p style={{ margin: "4px 0 0", opacity: 0.75, fontSize: "13px" }}>
               Watch Live Sports Free • HD Streaming • No Subscription
             </p>
 
@@ -256,7 +256,7 @@ export default function SportsLanding() {
         </div>
       </div>
 
-      {/* APP PREVIEW / SCREENSHOTS */}
+      {/* APP PREVIEW */}
       <div style={{ padding: "0 20px 20px" }}>
         <h2 style={{ fontSize: "18px", marginBottom: "10px" }}>App preview</h2>
 
@@ -352,7 +352,7 @@ export default function SportsLanding() {
                   color: "#00ff9d",
                 }}
               >
-                Tap &gt; Download app to watch
+                Tap → Download app to watch
               </p>
             </div>
           </div>
@@ -389,7 +389,7 @@ export default function SportsLanding() {
                   color: "#00ff9d",
                 }}
               >
-                Tap &gt; Start streaming in HD
+                Tap → Start streaming in HD
               </p>
             </div>
           </div>
@@ -515,4 +515,4 @@ export default function SportsLanding() {
       </div>
     </main>
   );
-              }
+            }
