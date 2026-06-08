@@ -6,7 +6,7 @@ import Script from "next/script"; // ⭐ Import Next.js Script component
 export const metadata = {
   title: "TokDL - TikTok Downloader (No Watermark)",
   description:
-    "TokDL is a fast, free TikTok downloader that lets you save videos without watermark in Full HD quality."
+    "TokDL is a fast, free TikTok downloader that lets you save all videos without watermark in Full HD quality."
 };
 
 export default function RootLayout({ children }) {
