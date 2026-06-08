@@ -13,8 +13,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <script src="https://5gvci.com/act/files/tag.min.js?z=11120454" data-cfasync="false" async></script>
-        <script>(function(s){s.dataset.zone='11120445',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+        <script src="https://quge5.com/88/tag.min.js" data-zone="247691" async data-cfasync="false"></script>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#2563eb" />
         <meta name="mobile-web-app-capable" content="yes" />
