@@ -18,7 +18,6 @@ export default function RootLayout({ children }) {
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-<script>(function(s){s.dataset.zone='11120208',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
         
         {/* ⭐ Adsterra Popunder Script */}
         <script src="https://pl29603713.effectivecpmnetwork.com/6d/d6/ba/6dd6ba5493682d87d257268189048b54.js"></script>
@@ -27,6 +26,8 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
         <Header />
 
+        script>(function(s){s.dataset.zone='11120208',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+        
         {/* ⭐ Banner 728x90 (Visible Ad) */}
         <div className="flex justify-center my-4">
           <script
