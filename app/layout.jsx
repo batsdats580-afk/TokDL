@@ -20,26 +20,7 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
-        {/* ⭐ Monetag Vignette */}
-        <Script src="/vignette.js" strategy="afterInteractive" />
-
-        {/* ⭐ Monetag FAST tag */}
-        <Script
-          src="https://quge5.com/88/tag.min.js"
-          data-zone="247658"
-          strategy="afterInteractive"
-          data-cfasync="false"
-        />
-
-        {/* ⭐ Monetag Inline Tag (Fixed with dangerouslySetInnerHTML) */}
-        <Script
-          id="monetag-inline"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(s){s.dataset.zone='11120389',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`
-          }}
-        />
-
+        
         {/* ⭐ Adsterra Popunder Script */}
         <Script 
           src="https://pl29603713.effectivecpmnetwork.com/6d/d6/ba/6dd6ba5493682d87d257268189048b54.js" 
