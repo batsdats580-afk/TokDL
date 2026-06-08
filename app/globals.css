@@ -44,3 +44,15 @@ a:hover {
     linear-gradient(45deg, #ff0050, #00f2ea) border-box;
   box-shadow: 0 0 10px #ff0050, 0 0 10px #00f2ea;
 }
+
+.neon-border {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(#000, #000) padding-box,
+    linear-gradient(45deg, #ff0050, #00f2ea) border-box;
+  box-shadow: 0 0 10px #ff0050, 0 0 10px #00f2ea;
+}
+
+.neon-text {
+  text-shadow: 0 0 6px #ff0050, 0 0 12px #00f2ea;
+}
