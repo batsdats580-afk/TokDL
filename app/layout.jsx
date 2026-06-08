@@ -2,8 +2,6 @@ import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-<script src="https://quge5.com/88/tag.min.js" data-zone="247658" async data-cfasync="false"></script>
-
 export const metadata = {
   title: "TokDL - TikTok Downloader (No Watermark)",
   description:
@@ -14,6 +12,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <script src="https://quge5.com/88/tag.min.js" data-zone="247658" async data-cfasync="false"></script>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#2563eb" />
         <meta name="mobile-web-app-capable" content="yes" />
