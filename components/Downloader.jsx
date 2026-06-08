@@ -1,14 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import LoadingAnimation from "./LoadingAnimation";
 
 export default function Downloader() {
   const [url, setUrl] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false); // Added downloading state
+  const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
+
+  // Recent downloads
+  const [recent, setRecent] = useState([]);
+  const [showRecent, setShowRecent] = useState(false);
+
+  const inputRef = useRef(null);
+
+  // ⭐ Auto-focus input
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  // ⭐ Auto-paste TikTok/Instagram link from clipboard
+  useEffect(() => {
+    navigator.clipboard.readText().then(text => {
+      if (
+        text.includes("tiktok.com") ||
+        text.includes("instagram.com") ||
+        text.includes("ig.me")
+      ) {
+        setUrl(text);
+      }
+    });
+  }, []);
+
+  // ⭐ Load recent downloads
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("recentDownloads") || "[]");
+    setRecent(saved);
+  }, []);
+
+  // ⭐ Save recent downloads
+  const addRecent = (item) => {
+    const updated = [item, ...recent].slice(0, 10);
+    setRecent(updated);
+    localStorage.setItem("recentDownloads", JSON.stringify(updated));
+  };
+
+  // ⭐ Paste button
+  const pasteFromClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      setUrl(text);
+    } catch (err) {
+      setError("Unable to read clipboard");
+    }
+  };
 
   const detectPlatform = (link) => {
     if (link.includes("tiktok.com")) return "tiktok";
@@ -90,30 +138,26 @@ export default function Downloader() {
     setTimeout(() => setToast(""), 2500);
   };
 
-    // ⭐ UPDATED: NATIVE OS DOWNLOAD TRIGGER
+  // ⭐ Native OS download trigger + Monetag ad
   const downloadDirect = (fileUrl, filename) => {
     if (!fileUrl) return;
 
-    // 1. Fire Monetag Ad in a new tab (User stays on your page)
     window.open("https://omg10.com/4/11083799", "_blank");
 
-    // 2. Trigger the native browser download
-    // Because your route.js sends 'Content-Disposition: attachment', 
-    // the phone will ignore the navigation and just start the download.
-    const proxyUrl = `/api/download?url=${encodeURIComponent(fileUrl)}&title=${encodeURIComponent(filename || 'media')}`;
-    
-    // We use a hidden iframe to prevent the page from navigating away
+    const proxyUrl = `/api/download?url=${encodeURIComponent(
+      fileUrl
+    )}&title=${encodeURIComponent(filename || "media")}`;
+
     const iframe = document.createElement("iframe");
     iframe.style.display = "none";
     iframe.src = proxyUrl;
     document.body.appendChild(iframe);
-    
-    // Cleanup the iframe after a few seconds
+
     setTimeout(() => {
       document.body.removeChild(iframe);
     }, 5000);
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -141,6 +185,12 @@ export default function Downloader() {
       }
 
       setResult(data);
+      addRecent({
+        thumbnail: data.thumbnail,
+        username: data.username,
+        url: data.videoUrl || data.imageUrl,
+      });
+
     } catch (err) {
       setError(err.message || "Something went wrong. Try again.");
     } finally {
@@ -181,40 +231,90 @@ export default function Downloader() {
 
   return (
     <section className="max-w-xl mx-auto mt-6 relative">
+
+      {/* Toast */}
       {toast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 rounded-full text-sm shadow-lg z-50">
           {toast}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <label className="block text-sm font-medium text-gray-700">
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="space-y-3 bg-white dark:bg-black p-5 rounded-2xl shadow-lg neon-border">
+
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           Paste TikTok or Instagram link
         </label>
 
-        <input
-          type="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://www.tiktok.com/... or https://www.instagram.com/..."
-          className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        {/* Input + Paste Button */}
+        <div className="flex gap-2">
+          <input
+            ref={inputRef}
+            type="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://www.tiktok.com/... or https://www.instagram.com/..."
+            className="flex-1 border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:text-white"
+          />
+
+          <button
+            type="button"
+            onClick={pasteFromClipboard}
+            className="px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold active:scale-95 neon-border"
+          >
+            Paste
+          </button>
+        </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition disabled:opacity-60"
+          className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition disabled:opacity-60 neon-border flex justify-center"
         >
-          {loading ? "Fetching media..." : "Download"}
+          {loading ? <LoadingAnimation /> : "Download"}
         </button>
       </form>
 
+      {/* Recent Downloads */}
+      <div className="mt-4">
+        <button
+          onClick={() => setShowRecent(!showRecent)}
+          className="w-full py-2 text-center font-semibold text-gray-800 dark:text-white neon-border rounded-xl"
+        >
+          Recent Downloads {showRecent ? "▲" : "▼"}
+        </button>
+
+        {showRecent && recent.length > 0 && (
+          <div className="mt-3 flex gap-3 overflow-x-auto pb-2">
+            {recent.map((item, i) => (
+              <div
+                key={i}
+                className="min-w-[120px] bg-white dark:bg-gray-900 rounded-xl shadow-md neon-border p-2"
+              >
+                <img
+                  src={item.thumbnail}
+                  className="w-full h-24 object-cover rounded-lg mb-2"
+                />
+                <p className="text-xs text-gray-700 dark:text-gray-300">@{item.username}</p>
+                <button
+                  onClick={() => downloadDirect(item.url, "media")}
+                  className="w-full mt-2 bg-green-600 text-white text-xs py-1 rounded-lg neon-border"
+                >
+                  Download
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Result */}
       {error && (
         <p className="mt-3 text-sm text-red-600 font-medium">{error}</p>
       )}
 
       {result && (
-        <div className="mt-4 p-4 bg-white rounded-xl shadow-md">
+        <div className="mt-4 p-4 bg-white dark:bg-black rounded-xl shadow-md neon-border">
           {result.thumbnail && (
             <img
               src={result.thumbnail}
@@ -223,35 +323,35 @@ export default function Downloader() {
             />
           )}
 
-          <p className="font-semibold text-sm">@{result.username}</p>
-          <p className="text-gray-600 text-sm mb-3 line-clamp-3">
+          <p className="font-semibold text-sm text-gray-800 dark:text-gray-200">@{result.username}</p>
+          <p className="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-3">
             {result.caption}
           </p>
 
-          {/* TIKTOK UI */}
+          {/* TikTok */}
           {result.platform === "tiktok" && (
             <>
               <button
                 onClick={() => downloadDirect(result.videoUrl, "video.mp4")}
                 disabled={isDownloading}
-                className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition disabled:opacity-60"
+                className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition disabled:opacity-60 neon-border"
               >
-                {isDownloading ? "Saving..." : "Save video to device"}
+                {isDownloading ? <LoadingAnimation /> : "Save video to device"}
               </button>
 
               {result.audioUrl && (
                 <button
                   onClick={() => downloadDirect(result.audioUrl, "audio.mp3")}
                   disabled={isDownloading}
-                  className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold text-lg hover:bg-orange-600 transition mt-3 disabled:opacity-60"
+                  className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold text-lg hover:bg-orange-600 transition mt-3 disabled:opacity-60 neon-border"
                 >
-                  {isDownloading ? "Saving..." : "Download Audio (MP3)"}
+                  {isDownloading ? <LoadingAnimation /> : "Download Audio (MP3)"}
                 </button>
               )}
             </>
           )}
 
-          {/* INSTAGRAM UI */}
+          {/* Instagram */}
           {result.platform === "instagram" && (
             <>
               <button
@@ -264,12 +364,12 @@ export default function Downloader() {
                   )
                 }
                 disabled={isDownloading}
-                className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition disabled:opacity-60"
+                className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition disabled:opacity-60 neon-border"
               >
-                {isDownloading ? "Saving..." : renderInstagramButtonLabel(result)}
+                {isDownloading ? <LoadingAnimation /> : renderInstagramButtonLabel(result)}
               </button>
 
-              <p className="text-xs text-gray-500 mt-2 text-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
                 Works for Instagram Stories, Reels, Posts, and Highlights.
               </p>
             </>
@@ -278,5 +378,4 @@ export default function Downloader() {
       )}
     </section>
   );
-          }
-              
+    }
