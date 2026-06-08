@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 export const metadata = {
   title: "TokDL - TikTok Downloader (No Watermark)",
   description:
-    "TokDL is a fast, free TikTok downloader that lets you save videos without watermark in HD quality."
+    "TokDL is a fast, free TikTok downloader that lets you save videos without watermark in Full HD quality."
 };
 
 export default function RootLayout({ children }) {
