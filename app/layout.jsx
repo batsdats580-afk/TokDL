@@ -25,9 +25,21 @@ export default function RootLayout({ children }) {
 
       <body className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
         <Header />
-
-        script>(function(s){s.dataset.zone='11120208',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-        
+        <script
+  dangerouslySetInnerHTML={{
+    __html: `
+      (function(s){
+        s.dataset.zone='11120208';
+        s.src='https://n6wxm.com/vignette.min.js';
+      })(
+        [document.documentElement, document.body]
+          .filter(Boolean)
+          .pop()
+          .appendChild(document.createElement('script'))
+      );
+    `,
+  }}
+/>
         {/* ⭐ Banner 728x90 (Visible Ad) */}
         <div className="flex justify-center my-4">
           <script
