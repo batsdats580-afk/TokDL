@@ -2,6 +2,8 @@ import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
+<script src="https://quge5.com/88/tag.min.js" data-zone="247658" async data-cfasync="false"></script>
+
 export const metadata = {
   title: "TokDL - TikTok Downloader (No Watermark)",
   description:
