@@ -71,3 +71,108 @@ a:hover {
 .animate-slideDown {
   animation: slideDown 0.18s ease-out;
 }
+
+/* Light background */
+body {
+  background: #f7f7f7;
+}
+
+/* Clean white card */
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+/* Input box */
+.input-clean {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #111;
+  width: 100%;
+}
+
+.input-clean:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
+  outline: none;
+}
+
+/* Buttons */
+.btn-blue {
+  background: #2563eb;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  width: 100%;
+  transition: 0.2s;
+}
+
+.btn-blue:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.btn-orange {
+  background: #f97316;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  width: 100%;
+  transition: 0.2s;
+}
+
+.btn-orange:hover {
+  background: #ea580c;
+  transform: translateY(-1px);
+}
+
+.btn-purple {
+  background: #8b5cf6;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn-purple:hover {
+  background: #7c3aed;
+  transform: translateY(-1px);
+}
+
+/* Recent download card */
+.download-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Dark mode improvements */
+.dark .card,
+.dark .download-card {
+  background: #1a1a1a;
+  box-shadow: none;
+}
+
+.dark .input-clean {
+  background: #111;
+  border-color: #333;
+  color: #eee;
+}
+
+.dark .btn-blue,
+.dark .btn-orange,
+.dark .btn-purple {
+  opacity: 0.95;
+}
