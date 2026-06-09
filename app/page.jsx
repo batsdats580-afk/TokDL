@@ -5,14 +5,15 @@ import Downloader from "@/components/Downloader";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-black transition">
+    <main className="min-h-screen bg-[#f7f7f7] dark:bg-black transition">
+
       <section className="max-w-3xl mx-auto px-4 py-10">
 
         <InstallPWA />
 
         {/* HERO SECTION */}
         <header className="mb-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 neon-text text-gray-900 dark:text-white">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-blue-600 dark:text-white">
             TikTok & Instagram Downloader
           </h1>
 
@@ -21,16 +22,14 @@ export default function HomePage() {
           </p>
 
           {/* HOW TO USE */}
-          <div className="mt-6 bg-white dark:bg-gray-900 p-5 rounded-2xl shadow-lg neon-border text-left max-w-md mx-auto">
-            <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
-              How to Use
-            </h2>
+          <div className="card mt-6 max-w-md mx-auto text-left">
+            <h2 className="section-title">How to Use</h2>
 
             <ul className="space-y-2 text-gray-700 dark:text-gray-300 text-sm">
-              <li>• Paste your TikTok or Instagram link</li>
-              <li>• Tap <strong>Download → Save to device</strong></li>
-              <li>• When video opens, tap <strong>Back</strong> or <strong>❌</strong></li>
-              <li>• Tap <strong>“Download again”</strong> if shown</li>
+              <li>🔵 Paste your TikTok or Instagram link</li>
+              <li>🟣 Tap <strong>Download → Save to device</strong></li>
+              <li>🟧 When video opens, tap <strong>Back</strong> or <strong>❌</strong></li>
+              <li>🔵 Tap <strong>“Download again”</strong> if shown</li>
             </ul>
           </div>
         </header>
@@ -39,7 +38,7 @@ export default function HomePage() {
         <Downloader />
       </section>
 
-      {/* SEO CONTENT (unchanged) */}
+      {/* SEO CONTENT */}
       <section className="max-w-4xl mx-auto px-4 pb-16 text-gray-800 dark:text-gray-300 space-y-6">
 
         <h2 className="text-2xl font-bold mt-10 dark:text-white">
