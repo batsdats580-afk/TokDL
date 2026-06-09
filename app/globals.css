@@ -56,3 +56,18 @@ a:hover {
 .neon-text {
   text-shadow: 0 0 6px #ff0050, 0 0 12px #00f2ea;
 }
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.18s ease-out;
+}
