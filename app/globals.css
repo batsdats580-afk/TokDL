@@ -33,7 +33,7 @@ a:hover {
   text-shadow: 0 0 6px #ff0050, 0 0 12px #00f2ea;
 }
 
-/* Remove neon-border from UI (we agreed to remove it everywhere) */
+/* Remove neon-border from UI */
 .neon-border {
   border: none;
   background: none;
@@ -72,6 +72,11 @@ a:hover {
   color: #111;
 }
 
+/* FIX: Section title in dark mode */
+.dark .section-title {
+  color: #fff;
+}
+
 /* INPUT BOX */
 .input-clean {
   background: #ffffff;
@@ -92,12 +97,13 @@ a:hover {
 /* BUTTONS */
 .btn-blue {
   background: #2563eb;
-  color: white;
+  color: white !important;
   padding: 14px 20px;
   border-radius: 12px;
   font-weight: 600;
   width: 100%;
   transition: 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
 .btn-blue:hover {
@@ -107,12 +113,13 @@ a:hover {
 
 .btn-orange {
   background: #f97316;
-  color: white;
+  color: white !important;
   padding: 14px 20px;
   border-radius: 12px;
   font-weight: 600;
   width: 100%;
   transition: 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
 .btn-orange:hover {
@@ -120,17 +127,19 @@ a:hover {
   transform: translateY(-1px);
 }
 
+/* FIX: Paste button visibility */
 .btn-purple {
-  background: #8b5cf6;
-  color: white;
+  background: #7c3aed !important; /* stronger purple */
+  color: white !important;
   padding: 14px 20px;
   border-radius: 12px;
   font-weight: 600;
   transition: 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
 .btn-purple:hover {
-  background: #7c3aed;
+  background: #6d28d9;
   transform: translateY(-1px);
 }
 
@@ -143,6 +152,24 @@ a:hover {
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+/* RESULT BUTTONS (Save to device / MP3) */
+.result-btn {
+  background: #2563eb;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  width: 100%;
+  text-align: center;
+  display: block;
+  margin-top: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.result-btn.mp3 {
+  background: #f97316;
 }
 
 /* DARK MODE */
@@ -165,6 +192,7 @@ a:hover {
 
 .dark .btn-blue,
 .dark .btn-orange,
-.dark .btn-purple {
+.dark .btn-purple,
+.dark .result-btn {
   opacity: 0.95;
 }
