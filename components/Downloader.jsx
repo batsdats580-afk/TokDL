@@ -254,7 +254,7 @@ export default function Downloader() {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://www.tiktok.com/... or https://www.instagram.com/..."
-            className="flex-1 border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:text-white"
+            className="btn-purple" 
           />
 
           <button
@@ -269,7 +269,7 @@ export default function Downloader() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition disabled:opacity-60 neon-border flex justify-center"
+          className="btn-blue" 
         >
           {loading ? <LoadingAnimation /> : "Download"}
         </button>
@@ -334,7 +334,7 @@ export default function Downloader() {
               <button
                 onClick={() => downloadDirect(result.videoUrl, "video.mp4")}
                 disabled={isDownloading}
-                className="w-full bg-green-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition disabled:opacity-60 neon-border"
+                className="result-btn"
               >
                 {isDownloading ? <LoadingAnimation /> : "Save video to device"}
               </button>
@@ -343,7 +343,7 @@ export default function Downloader() {
                 <button
                   onClick={() => downloadDirect(result.audioUrl, "audio.mp3")}
                   disabled={isDownloading}
-                  className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold text-lg hover:bg-orange-600 transition mt-3 disabled:opacity-60 neon-border"
+                  className="result-btn mp3"
                 >
                   {isDownloading ? <LoadingAnimation /> : "Download Audio (MP3)"}
                 </button>
